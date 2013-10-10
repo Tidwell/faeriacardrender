@@ -11,16 +11,27 @@
 	var drawBuffer = [];
 	var totalLoaded = 0;
 
+	var rarityMap = {
+		C: 'img/card_rarity_common.png',
+		U: 'img/card_rarity_uncommon.png',
+		E: 'img/card_rarity_exceptional.png',
+		R: 'img/card_rarity_rare.png',
+		L: 'img/card_rarity_legendary.png',
+	}
+
 	function init() {
 		ctx = document.getElementById('canvas').getContext('2d');
+	}
+
+	function render(card) {
 		queueImage({
-			image: 'img/tstimg.jpg',
+			image: card.img,
 			x: 18,
 			y: 73
 		});
 
 		queueImage({
-			image: 'img/cardbg_human.png',
+			image: card.background,
 			x: 0,
 			y: 33
 		});
@@ -32,7 +43,7 @@
 		});
 
 		queueText({
-			text: '1',
+			text: card.goldCost,
 			font: 'normal normal normal 20px Cambo',
 			fillStyle: '#000',
 			x: (((cardWidth-goldIconWidth)/2)+goldIconWidth/2)-5,
@@ -40,13 +51,13 @@
 		})
 
 		queueImage({
-			image: 'img/card_rarity_uncommon.png',
+			image: rarityMap[card.rarity],
 			x: 12,
 			y: 452
 		});
 
 		var titleOpts = {
-			text: 'MIRNAST ENGINEER',
+			text: card.name,
 			font: 'normal normal bold 15px Cambo',
 			fillStyle: '#d0c8a8',
 			x: null,
@@ -56,7 +67,7 @@
 		queueText(titleOpts);
 
 		var typeOpts = {
-			text: 'Creature',
+			text: card.type,
 			font: 'normal normal normal 20px Cambo',
 			fillStyle: '#d0c8a8',
 			x: null,
@@ -66,7 +77,7 @@
 		queueText(typeOpts);
 
 		effectText = {
-			text: '1 energy, 1 faeria - Target structure loses 1 life.',
+			text: card.effect,
 			x: 140,
 			y: 390,
 			maxWidth: 250,
@@ -77,7 +88,7 @@
 		queueWrapText(effectText);
 
 		var attackLifeOpts = {
-			text: '1 / 1',
+			text: card.attack + ' / ' + card.life,
 			font: 'normal normal normal 24px Cambo',
 			fillStyle: '#d0c8a8',
 			x: 137,
@@ -182,6 +193,10 @@
 	else{
 		window.attachEvent('onload',init); //IE
 	}
+
+	window.FAERIACARDS = {
+		render: render
+	}
 }());
 
 WebFontConfig = {
@@ -198,3 +213,26 @@ WebFontConfig = {
     var s = document.getElementsByTagName('script')[0];
     s.parentNode.insertBefore(wf, s);
 })();
+
+
+
+if(window.addEventListener){
+	window.addEventListener('load',init,false); //W3C
+}
+else{
+	window.attachEvent('onload',init); //IE
+}
+
+function init() {
+	FAERIACARDS.render({
+		name: 'MIRNAST ENGINEER',
+		img: 'img/tstimg.jpg',
+		background: 'img/cardbg_human.png',
+		goldCost: 1,
+		rarity: 'E',
+		attack: 1,
+		life: 2,
+		type: 'Creature',
+		effect: '1 energy, 1 faeria - Target structure loses 1 life.'
+	})
+}
