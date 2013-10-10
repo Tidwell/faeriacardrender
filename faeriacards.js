@@ -167,9 +167,9 @@
 			text: card.effect,
 			x: 140,
 			y: 390,
-			maxWidth: 250,
+			maxWidth: 220,
 			lineHeight: 20,
-			font: 'normal normal normal 17px Helvetica',
+			font: 'normal normal normal 16px Helvetica',
 			fillStyle: '#000'
 		};
 		queueWrapText(effectText);
@@ -231,6 +231,7 @@
 	}
 
 	function wrapText(opt) {
+		var boxHeight = 200;
 		var text = opt.text;
 		var x = opt.x;
 		var y = opt.y;
@@ -242,6 +243,7 @@
 		ctx.textAlign = 'center';
 
 		var words = text.split(' ');
+		var lines = [];
 		var line = '';
 
 		for (var n = 0; n < words.length; n++) {
@@ -249,14 +251,21 @@
 			var metrics = ctx.measureText(testLine);
 			var testWidth = metrics.width;
 			if (testWidth > maxWidth && n > 0) {
-				ctx.fillText(line, x, y);
+				lines.push(line);
 				line = words[n] + ' ';
-				y += lineHeight;
 			} else {
 				line = testLine;
 			}
 		}
-		ctx.fillText(line, x, y);
+		lines.push(line);
+
+		yOffset = 310+(boxHeight-(lines.length*lineHeight))/2
+		y = yOffset;
+
+		lines.forEach(function(l){
+			ctx.fillText(l, x, y);
+			y += lineHeight;
+		});
 	}
 
 	function queueImage(opt) {
