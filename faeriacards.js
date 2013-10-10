@@ -144,14 +144,17 @@
 		});
 
 		var titleOpts = {
-			text: card.name,
+			text: card.name.toUpperCase(),
 			font: 'normal normal bold 15px Cambo',
 			fillStyle: '#d0c8a8',
-			x: null,
-			y: 80
+			x: 140,
+			y: 35,
+			maxWidth: 200,
+			lineHeight: 15,
+			boxHeight: 100
 		};
-		titleOpts.x = getCenteredTextOffset(titleOpts);
-		queueText(titleOpts);
+		//titleOpts.x = getCenteredTextOffset(titleOpts);
+		queueWrapText(titleOpts);
 
 		var typeOpts = {
 			text: card.type,
@@ -166,11 +169,12 @@
 		effectText = {
 			text: card.effect,
 			x: 140,
-			y: 390,
+			y: 310,
 			maxWidth: 220,
 			lineHeight: 20,
 			font: 'normal normal normal 16px Helvetica',
-			fillStyle: '#000'
+			fillStyle: '#000',
+			boxHeight: 200
 		};
 		queueWrapText(effectText);
 
@@ -231,14 +235,13 @@
 	}
 
 	function wrapText(opt) {
-		var boxHeight = 200;
+		var boxHeight = opt.boxHeight;
 		var text = opt.text;
 		var x = opt.x;
-		var y = opt.y;
 		var maxWidth = opt.maxWidth;
 		var lineHeight = opt.lineHeight;
 
-		ctx.font = opt.font
+		ctx.font = opt.font;
 		ctx.fillStyle = opt.fillStyle;
 		ctx.textAlign = 'center';
 
@@ -259,8 +262,7 @@
 		}
 		lines.push(line);
 
-		yOffset = 310+(boxHeight-(lines.length*lineHeight))/2
-		y = yOffset;
+		var y = opt.y+(boxHeight-(lines.length*lineHeight))/2;
 
 		lines.forEach(function(l){
 			ctx.fillText(l, x, y);
