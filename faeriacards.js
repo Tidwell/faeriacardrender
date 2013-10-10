@@ -274,6 +274,18 @@
 		return ((cardWidth-txtWidth)/2)+4;
 	}
 
+	function generateKeyword(keyword) {
+		keyword = keyword.replace('[','');
+		keyword = keyword.replace(']','');
+		var reg = new RegExp(/[0-9]/);
+		var num = keyword.match(reg);
+		if (num) {
+			num = num[0];
+			keyword = keyword.replace(num, ' '+num);
+		}
+		return keyword;
+	}
+
 	function wrapText(opt) {
 		var boxHeight = opt.boxHeight;
 		var text = opt.text;
@@ -307,8 +319,10 @@
 			var isRendered = false;
 			var x = opt.x;
 			function renderColored(opt,x,y,txtWidth,keyword) {
+				keyword = generateKeyword(keyword);
+
 				ctx.beginPath();
-				ctx.rect(x, y-12, txtWidth, 16);
+				ctx.rect(x, y-12, ctx.measureText(keyword).width, 16);
 				ctx.fillStyle = keywordColors[opt.color].bg;
 				ctx.fill();
 
@@ -322,7 +336,7 @@
 			keywords.forEach(function(keyword){
 
 				if (l.indexOf(keyword) !== -1) {
-					var reg = new RegExp(keyword+' [0-9]');
+					var reg = new RegExp('\\['+keyword+'[0-9]'+'\\]');
 					if (l.match(reg)) {
 						keyword = l.match(reg)[0];
 					}
@@ -338,7 +352,7 @@
 					var colorX = x;
 					var colorY = y;
 
-					var txtWidth = ctx.measureText(keyword).width;
+					var txtWidth = ctx.measureText(generateKeyword(keyword)).width;
 					x += txtWidth;
 
 					ctx.fillStyle = opt.fillStyle;
