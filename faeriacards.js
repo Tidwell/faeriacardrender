@@ -117,14 +117,22 @@
 		}
 
 		landProps.forEach(function(color){
+			var startOffset;
+			//land icons are rendered right to left
+			if (card['land'+color]) {
+				startOffset = iconOffset;
+			}
+			if (card['land'+color] > 1) {
+				startOffset += (landIconWidth/2)*(card['land'+color]-1);
+			}
 			var i = 0;
 			while (i< card['land'+color]) {
 				queueImage({
 					image: 'img/card_cost_'+color+'.png',
-					x: iconOffset,
+					x: startOffset,
 					y: 16
 				});
-				iconOffset += landIconWidth/2;
+				startOffset -= landIconWidth/2;
 				i++;
 			}
 		});
