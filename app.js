@@ -202,7 +202,7 @@
 //load fonts
 WebFontConfig = {
     google: {
-        families: ['Cambo', 'Rock Salt']
+        families: ['Cambo']
     }
 };
 (function () {
