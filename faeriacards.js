@@ -205,15 +205,28 @@
 		};
 		queueWrapText(effectText);
 
-		var attackLifeOpts = {
-			text: card.attack + ' / ' + card.life,
-			font: 'normal normal normal 24px Cambo',
-			fillStyle: '#d0c8a8',
-			align: 'center',
-			x: 137,
-			y: 335
-		};
-		queueText(attackLifeOpts);
+		if (card.type === 'Creature') {
+			var attackLifeOpts = {
+				text: card.attack + ' / ' + card.life,
+				font: 'normal normal normal 24px Cambo',
+				fillStyle: '#d0c8a8',
+				align: 'center',
+				x: 137,
+				y: 335
+			};
+			queueText(attackLifeOpts);
+		} else if (card.type === 'Structure') {
+			var lifeOpts = {
+				text: card.life,
+				font: 'normal normal normal 24px Cambo',
+				fillStyle: '#d0c8a8',
+				align: 'center',
+				x: 137,
+				y: 335
+			};
+			queueText(lifeOpts);
+		}
+
 	}
 
 	function getIconOffset(card) {
@@ -238,7 +251,7 @@
 				totalIcons += card['land'+color];
 				totalIconWidth += landIconWidth;
 				if (card['land'+color] > 1) {
-					totalIconWidth += landIconWidth * (card['land'+color]-1) / 2
+					totalIconWidth += landIconWidth * (card['land'+color]-1) / 2;
 				}
 			}
 			isLand = true;
@@ -316,8 +329,8 @@
 					var before = l.substr(0, l.indexOf(keyword));
 					var after = l.substr(l.indexOf(keyword)+keyword.length, l.length);
 
-					x = ((cardWidth-ctx.measureText(l).width)/2 + 5)
-					ctx.textAlign = 'left'
+					x = ((cardWidth-ctx.measureText(l).width)/2 + 5);
+					ctx.textAlign = 'left';
 					ctx.fillStyle = opt.fillStyle;
 					ctx.fillText(before, x, y);
 					x += ctx.measureText(before).width;
