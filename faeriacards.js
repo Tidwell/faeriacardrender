@@ -33,6 +33,32 @@
 
 	var landProps = ['B', 'G', 'R', 'Y'];
 
+	var keywordColors = {
+		B: {text: '#00a7a6', bg: '#00222e'},
+		G: {text: '#a9f300', bg: '#2d5d00'},
+		R: {text: '#db3500', bg: '#2a0007'},
+		Y: {text: '#ffc100', bg: '#0f0e0e'},
+		H: {text: '#baa083', bg: '#2d2727'}
+	};
+
+	var keywords = [
+		'Ranged attack',
+		'Strikeback',
+		'Conquest',
+		'Flying',
+		'Charge',
+		'Haste',
+		'Haunt',
+		'Protection',
+		'Accumulator',
+		'Jump',
+		'Frenzy',
+		'Curse',
+		'Radiate',
+		'Aquatic',
+		'Auto-collect'
+	];
+
 	function onReady(func) {
 		onReadyFuncs.push(func);
 	}
@@ -174,7 +200,8 @@
 			lineHeight: 20,
 			font: 'normal normal normal 16px Helvetica',
 			fillStyle: '#000',
-			boxHeight: 200
+			boxHeight: 200,
+			color: card.color[0].toUpperCase()
 		};
 		queueWrapText(effectText);
 
@@ -237,7 +264,6 @@
 	function wrapText(opt) {
 		var boxHeight = opt.boxHeight;
 		var text = opt.text;
-		var x = opt.x;
 		var maxWidth = opt.maxWidth;
 		var lineHeight = opt.lineHeight;
 
@@ -265,7 +291,66 @@
 		var y = opt.y+(boxHeight-(lines.length*lineHeight))/2;
 
 		lines.forEach(function(l){
-			ctx.fillText(l, x, y);
+			var isRendered = false;
+			var x = opt.x;
+			function renderColored(opt,x,y,txtWidth,keyword) {
+				ctx.beginPath();
+				ctx.rect(x, y-12, txtWidth, 16);
+				ctx.fillStyle = keywordColors[opt.color].bg;
+				ctx.fill();
+
+				ctx.fillStyle = keywordColors[opt.color].text;
+				ctx.fillText(keyword, x, y);
+
+			}
+
+			colorToRender = [];
+
+			keywords.forEach(function(keyword){
+
+				if (l.indexOf(keyword) !== -1) {
+					var reg = new RegExp(keyword+' [0-9]');
+					if (l.match(reg)) {
+						keyword = l.match(reg)[0];
+					}
+					var before = l.substr(0, l.indexOf(keyword));
+					var after = l.substr(l.indexOf(keyword)+keyword.length, l.length);
+
+					x = ((cardWidth-ctx.measureText(l).width)/2 + 5)
+					ctx.textAlign = 'left'
+					ctx.fillStyle = opt.fillStyle;
+					ctx.fillText(before, x, y);
+					x += ctx.measureText(before).width;
+
+					var colorX = x;
+					var colorY = y;
+
+					var txtWidth = ctx.measureText(keyword).width;
+					x += txtWidth;
+
+					ctx.fillStyle = opt.fillStyle;
+					ctx.fillText(after, x, y);
+
+					colorToRender.push({
+						opt: opt,
+						x: colorX,
+						y: colorY,
+						txtWidth: txtWidth,
+						keyword: keyword
+					});
+
+					isRendered = true;
+				}
+			});
+			colorToRender.forEach(function(opt) {
+				renderColored(opt.opt, opt.x,opt.y,opt.txtWidth,opt.keyword);
+			});
+
+			if (!isRendered) {
+				ctx.textAlign = 'center';
+				ctx.fillStyle = opt.fillStyle;
+				ctx.fillText(l, x, y);
+			}
 			y += lineHeight;
 		});
 	}
