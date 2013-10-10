@@ -31,6 +31,14 @@
 			y: 20
 		});
 
+		queueText({
+			text: '1',
+			font: 'normal normal normal 20px Cambo',
+			fillStyle: '#000',
+			x: (((cardWidth-goldIconWidth)/2)+goldIconWidth/2)-5,
+			y: 40
+		})
+
 		queueImage({
 			image: 'img/card_rarity_uncommon.png',
 			x: 12,
