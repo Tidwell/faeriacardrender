@@ -8,6 +8,8 @@
 	var cardHeight = 450;
 
 	var goldIconWidth = 33;
+	var faeriaIconWidth = 32;
+	var landIconWidth = 34;
 
 	var rarityHeight = 15;
 
@@ -19,6 +21,8 @@
 
 	var onReadyFuncs = [];
 
+	var iconPadding = 2;
+
 	var rarityMap = {
 		C: 'img/card_rarity_common.png',
 		U: 'img/card_rarity_uncommon.png',
@@ -26,6 +30,8 @@
 		R: 'img/card_rarity_rare.png',
 		L: 'img/card_rarity_legendary.png',
 	};
+
+	var landProps = ['B', 'G', 'R', 'Y'];
 
 	function onReady(func) {
 		onReadyFuncs.push(func);
@@ -77,19 +83,51 @@
 			y: 33
 		});
 
-		queueImage({
-			image: 'img/card_goldicon.png',
-			x: (cardWidth-goldIconWidth)/2,
-			y: 20
-		});
+		var iconOffset = getIconOffset(card);
 
-		queueText({
-			text: card.goldCost,
-			font: 'normal normal normal 20px Cambo',
-			fillStyle: '#000',
-			x: (((cardWidth-goldIconWidth)/2)+goldIconWidth/2)-5,
-			y: 40
-		})
+		if (card.gold) {
+			queueImage({
+				image: 'img/card_goldicon.png',
+				x: iconOffset,
+				y: 20
+			});
+			queueText({
+				text: card.gold,
+				font: 'normal normal normal 20px Cambo',
+				fillStyle: '#000',
+				x: iconOffset+(goldIconWidth/2)-6,
+				y: 41
+			});
+			iconOffset += goldIconWidth+iconPadding;
+		}
+		if (card.faeria) {
+			queueImage({
+				image: 'img/card_faeriaicon.png',
+				x: iconOffset,
+				y: 18
+			});
+			queueText({
+				text: card.faeria,
+				font: 'normal normal normal 20px Cambo',
+				fillStyle: '#000',
+				x: iconOffset+(faeriaIconWidth/2)-5,
+				y: 40
+			});
+			iconOffset += faeriaIconWidth+iconPadding;
+		}
+
+		landProps.forEach(function(color){
+			var i = 0;
+			while (i< card['land'+color]) {
+				queueImage({
+					image: 'img/card_cost_'+color+'.png',
+					x: iconOffset,
+					y: 16
+				});
+				iconOffset += landIconWidth/2;
+				i++;
+			}
+		});
 
 		queueImage({
 			image: rarityMap[card.rarity],
@@ -125,7 +163,7 @@
 			lineHeight: 20,
 			font: 'normal normal normal 17px Helvetica',
 			fillStyle: '#000'
-		}
+		};
 		queueWrapText(effectText);
 
 		var attackLifeOpts = {
@@ -139,6 +177,44 @@
 		queueText(attackLifeOpts);
 	}
 
+	function getIconOffset(card) {
+		var totalIcons = 0;
+		var totalIconWidth = 0;
+		var isGold = false;
+		var isFaeria = false;
+		var isLand = false;
+
+		if (card.gold) {
+			totalIcons++;
+			totalIconWidth += goldIconWidth;
+			isGold = true;
+		}
+		if (card.faeria) {
+			totalIcons++;
+			totalIconWidth += faeriaIconWidth;
+			isFaeria = true;
+		}
+		landProps.forEach(function(color){
+			if (card['land'+color]) {
+				totalIcons += card['land'+color];
+				totalIconWidth += landIconWidth;
+				if (card['land'+color] > 1) {
+					totalIconWidth += landIconWidth * (card['land'+color]-1) / 2
+				}
+			}
+			isLand = true;
+		});
+
+		if (isGold && isFaeria || isGold && isLand || isFaeria && isLand) {
+			totalIconWidth += iconPadding; //padding between icons
+		}
+
+		if (isGold && isLand && isFaeria) {
+			totalIconWidth += iconPadding;
+		}
+
+		return (cardWidth-totalIconWidth)/2;
+	}
 	function getCenteredTextOffset(opt) {
 		ctx.font = opt.font;
 		ctx.fillStyle = opt.fillStyle;
