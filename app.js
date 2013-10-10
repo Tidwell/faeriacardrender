@@ -11,27 +11,41 @@
 	var drawBuffer = [];
 	var totalLoaded = 0;
 
+	var ready = false;
+	var afterLoad = [];
+
 	var rarityMap = {
 		C: 'img/card_rarity_common.png',
 		U: 'img/card_rarity_uncommon.png',
 		E: 'img/card_rarity_exceptional.png',
 		R: 'img/card_rarity_rare.png',
 		L: 'img/card_rarity_legendary.png',
-	}
+	};
 
 	function init() {
 		ctx = document.getElementById('canvas').getContext('2d');
 	}
 
+	function fontActive() {
+		ready = true;
+		afterLoad.forEach(function(card) {
+			render(card);
+		});
+		afterLoad = [];
+	}
+
 	function render(card) {
+		if (!ready) { afterLoad.push(card); return; }
+
 		queueImage({
 			image: card.img,
 			x: 18,
 			y: 73
 		});
 
+		var background = 'img/cardbg_' + card.color + (card.type.toLowerCase() === 'event' ? '_event' : '') + '.png';
 		queueImage({
-			image: card.background,
+			image: background,
 			x: 0,
 			y: 33
 		});
@@ -91,6 +105,7 @@
 			text: card.attack + ' / ' + card.life,
 			font: 'normal normal normal 24px Cambo',
 			fillStyle: '#d0c8a8',
+			align: 'center',
 			x: 137,
 			y: 335
 		};
@@ -173,7 +188,8 @@
 					ctx.drawImage(opt.img, opt.x, opt.y);
 					break;
 				case 'text':
-					ctx.font = opt.font
+					ctx.textAlign = opt.align ? opt.align : 'left';
+					ctx.font = opt.font;
 					ctx.fillStyle = opt.fillStyle;
 					ctx.fillText(opt.text, opt.x, opt.y);
 					break;
@@ -195,15 +211,20 @@
 	}
 
 	window.FAERIACARDS = {
-		render: render
+		render: render,
+		setFontActive: fontActive,
+		ready: ready
 	}
 }());
 
 //load fonts
 WebFontConfig = {
-    google: {
-        families: ['Cambo']
-    }
+	google: {
+		families: ['Cambo']
+	},
+	fontactive: function(familyName, fvd) {
+		FAERIACARDS.setFontActive();
+	}
 };
 (function () {
     var wf = document.createElement('script');
