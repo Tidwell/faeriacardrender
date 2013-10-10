@@ -35,7 +35,7 @@
 
 	var keywordColors = {
 		B: {text: '#00a7a6', bg: '#00222e'},
-		G: {text: '#a9f300', bg: '#2d5d00'},
+		G: {text: '#a9f300', bg: '#0d3109'},
 		R: {text: '#db3500', bg: '#2a0007'},
 		Y: {text: '#ffc100', bg: '#0f0e0e'},
 		H: {text: '#baa083', bg: '#2d2727'}
