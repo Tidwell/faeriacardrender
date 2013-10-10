@@ -199,6 +199,7 @@
 	}
 }());
 
+//load fonts
 WebFontConfig = {
     google: {
         families: ['Cambo', 'Rock Salt']
@@ -213,26 +214,3 @@ WebFontConfig = {
     var s = document.getElementsByTagName('script')[0];
     s.parentNode.insertBefore(wf, s);
 })();
-
-
-
-if(window.addEventListener){
-	window.addEventListener('load',init,false); //W3C
-}
-else{
-	window.attachEvent('onload',init); //IE
-}
-
-function init() {
-	FAERIACARDS.render({
-		name: 'MIRNAST ENGINEER',
-		img: 'img/tstimg.jpg',
-		background: 'img/cardbg_human.png',
-		goldCost: 1,
-		rarity: 'E',
-		attack: 1,
-		life: 2,
-		type: 'Creature',
-		effect: '1 energy, 1 faeria - Target structure loses 1 life.'
-	})
-}
