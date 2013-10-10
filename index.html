@@ -6,39 +6,22 @@
         <title></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
-            @import url(http://fonts.googleapis.com/css?family=Cambo);
-            canvas {
-                font-family:'Cambo'
-            }
-        </style>
-        <script src="app.js"></script>
-        <script>
-        if(window.addEventListener){
-            window.addEventListener('load',init,false); //W3C
-        }
-        else{
-            window.attachEvent('onload',init); //IE
-        }
-
-        function init() {
-            FAERIACARDS.render({
-                name: 'MIRNAST ENGINEER',
-                img: 'img/tstimg.jpg',
-                background: 'img/cardbg_human.png',
-                goldCost: 1,
-                rarity: 'E',
-                attack: 1,
-                life: 2,
-                type: 'Creature',
-                effect: '1 energy, 1 faeria - Target structure loses 1 life.',
-                color: 'human'
-            })
-        }
-
-        </script>
     </head>
     <body>
-        <canvas id="canvas" width="500" height="500"></canvas>
+        <script src="faeriacards.js"></script>
+        <script>
+        FAERIACARDS.render({
+            name: 'MIRNAST ENGINEER',
+            img: 'img/tstimg.jpg',
+            background: 'img/cardbg_human.png',
+            goldCost: 1,
+            rarity: 'E',
+            attack: 1,
+            life: 2,
+            type: 'Creature',
+            effect: '1 energy, 1 faeria - Target structure loses 1 life.',
+            color: 'human'
+        });
+        </script>
     </body>
 </html>

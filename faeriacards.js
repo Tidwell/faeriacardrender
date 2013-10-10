@@ -1,5 +1,4 @@
 (function() {
-	console.log('active')
 	var canvas;
 	var ctx;
 
@@ -18,6 +17,8 @@
 	var ready = false;
 	var afterLoad = [];
 
+	var onReadyFuncs = [];
+
 	var rarityMap = {
 		C: 'img/card_rarity_common.png',
 		U: 'img/card_rarity_uncommon.png',
@@ -26,18 +27,33 @@
 		L: 'img/card_rarity_legendary.png',
 	};
 
-	function init() {
-		console.log('init called')
-		var el = document.querySelectorAll(container);
-		console.log(el);
-		el.innerHTML = '<canvas id="canvas" width="500" height="500"></canvas>';
-		canvas = el.children[0]
+	function onReady(func) {
+		onReadyFuncs.push(func);
+	}
 
+	function setContainer(selector) {
+		container = selector;
+		getElements();
+	}
+	function init() {
+		getElements();
+	}
+
+	function getElements() {
+		//append the canvas
+		var el = document.querySelectorAll(container);
+		el[0].innerHTML = '<canvas width="500" height="500"></canvas>';
+		canvas = el[0].querySelectorAll('canvas')[0];
+		//get the context
 		ctx = canvas.getContext('2d');
 	}
 
 	function fontActive() {
 		ready = true;
+
+		onReadyFuncs.forEach(function(func) { func(); });
+		onReadyFuncs = [];
+
 		afterLoad.forEach(function(card) {
 			render(card);
 		});
@@ -46,6 +62,7 @@
 
 	function render(card) {
 		if (!ready) { afterLoad.push(card); return; }
+		if (!ctx) { getElements(); }
 
 		queueImage({
 			image: card.img,
@@ -213,17 +230,13 @@
 		totalLoaded = 0;
 	}
 
-	if(window.addEventListener){
-		window.addEventListener('load',init,false); //W3C
-	}
-	else{
-		window.attachEvent('onload',init); //IE
-	}
-
 	window.FAERIACARDS = {
 		render: render,
+		ready: onReady,
+		setContainer: setContainer,
+		init: init,
+
 		setFontActive: fontActive,
-		ready: ready
 	}
 }());
 
