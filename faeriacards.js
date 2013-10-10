@@ -179,7 +179,6 @@
 			lineHeight: 15,
 			boxHeight: 100
 		};
-		//titleOpts.x = getCenteredTextOffset(titleOpts);
 		queueWrapText(titleOpts);
 
 		var typeOpts = {
@@ -286,6 +285,19 @@
 		return keyword;
 	}
 
+	function renderColored(opt,x,y,txtWidth,keyword) {
+		keyword = generateKeyword(keyword);
+
+		ctx.beginPath();
+		ctx.rect(x, y-12, ctx.measureText(keyword).width, 16);
+		ctx.fillStyle = keywordColors[opt.color].bg;
+		ctx.fill();
+
+		ctx.fillStyle = keywordColors[opt.color].text;
+		ctx.fillText(keyword, x, y);
+
+	}
+
 	function wrapText(opt) {
 		var boxHeight = opt.boxHeight;
 		var text = opt.text;
@@ -318,18 +330,6 @@
 		lines.forEach(function(l){
 			var isRendered = false;
 			var x = opt.x;
-			function renderColored(opt,x,y,txtWidth,keyword) {
-				keyword = generateKeyword(keyword);
-
-				ctx.beginPath();
-				ctx.rect(x, y-12, ctx.measureText(keyword).width, 16);
-				ctx.fillStyle = keywordColors[opt.color].bg;
-				ctx.fill();
-
-				ctx.fillStyle = keywordColors[opt.color].text;
-				ctx.fillText(keyword, x, y);
-
-			}
 
 			colorToRender = [];
 
@@ -443,7 +443,7 @@
 		setContainer: setContainer,
 		init: init,
 
-		setFontActive: fontActive,
+		setFontActive: fontActive
 	}
 }());
 
