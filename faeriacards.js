@@ -56,7 +56,8 @@
 		'Curse',
 		'Radiate',
 		'Aquatic',
-		'Auto-collect'
+		'Auto-collect',
+		'Convoke'
 	];
 
 	function onReady(func) {
@@ -74,7 +75,7 @@
 	function getElements() {
 		//append the canvas
 		var el = document.querySelectorAll(container);
-		el[0].innerHTML = '<canvas width="500" height="500"></canvas>';
+		el[0].innerHTML = '<canvas width="280" height="500"></canvas>';
 		canvas = el[0].querySelectorAll('canvas')[0];
 		//get the context
 		ctx = canvas.getContext('2d');
@@ -95,6 +96,7 @@
 	function render(card) {
 		if (!ready) { afterLoad.push(card); return; }
 		if (!ctx) { getElements(); }
+		ctx.clearRect ( 0,0,canvas.width,canvas.height );
 
 		queueImage({
 			image: card.img,
@@ -343,6 +345,9 @@
 					var before = l.substr(0, l.indexOf(keyword));
 					var after = l.substr(l.indexOf(keyword)+keyword.length, l.length);
 
+					before = before.replace(']','');
+					after = after.replace('[','');
+
 					x = ((cardWidth-ctx.measureText(l).width)/2 + 5);
 					ctx.textAlign = 'left';
 					ctx.fillStyle = opt.fillStyle;
@@ -383,18 +388,30 @@
 	}
 
 	function queueImage(opt) {
-		var img = new Image(); // Create new img element
+		//a url
+		if (typeof opt.image === 'string') {
+			var img = new Image(); // Create new img element
 
-		img.addEventListener('load', function() {
-			totalLoaded++;
-			if (totalLoaded === drawBuffer.length) {
-				drawAll();
-			}
-		}, false);
-		img.src = opt.image; // Set source path
-		opt.img = img;
+			img.addEventListener('load', function() {
+				totalLoaded++;
+				if (totalLoaded === drawBuffer.length) {
+					drawAll();
+				}
+			}, false);
+			img.src = opt.image; // Set source path
+			opt.img = img;
+		} else {
+			opt.img = opt.image;
+		}
+
 		opt.type = 'image';
 		drawBuffer.push(opt);
+
+		//coming from local file
+		if (typeof opt.image === 'object') {
+			totalLoaded++;
+			drawAll();
+		}
 	}
 
 	function queueText(opt) {
@@ -437,14 +454,19 @@
 		totalLoaded = 0;
 	}
 
+	function toURL() {
+		return canvas.toDataURL();
+	}
+
 	window.FAERIACARDS = {
 		render: render,
 		ready: onReady,
 		setContainer: setContainer,
 		init: init,
+		toURL: toURL,
 
 		setFontActive: fontActive
-	}
+	};
 }());
 
 //load fonts
