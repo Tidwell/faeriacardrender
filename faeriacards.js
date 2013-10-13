@@ -61,7 +61,11 @@
 	];
 
 	function onReady(func) {
-		onReadyFuncs.push(func);
+		if (!ready) {
+			onReadyFuncs.push(func);
+		} else {
+			func();
+		}
 	}
 
 	function setContainer(selector) {
