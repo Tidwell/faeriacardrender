@@ -332,14 +332,19 @@
 		var line = '';
 
 		for (var n = 0; n < words.length; n++) {
-			var testLine = line + words[n] + ' ';
-			var metrics = ctx.measureText(testLine);
-			var testWidth = metrics.width;
-			if (testWidth > maxWidth && n > 0) {
+			if (words[n]==='[lb]') {
 				lines.push(line);
-				line = words[n] + ' ';
+				line = '';
 			} else {
-				line = testLine;
+				var testLine = line + words[n] + ' ';
+				var metrics = ctx.measureText(testLine);
+				var testWidth = metrics.width;
+				if (testWidth > maxWidth && n > 0) {
+					lines.push(line);
+					line = words[n] + ' ';
+				} else {
+					line = testLine;
+				}
 			}
 		}
 		lines.push(line);
