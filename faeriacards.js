@@ -85,7 +85,10 @@
 		ctx = canvas.getContext('2d');
 	}
 
+	var loadedFonts = 0;
 	function fontActive() {
+		loadedFonts++;
+		if (loadedFonts !== 2) { return; }
 		ready = true;
 
 		onReadyFuncs.forEach(function(func) { func(); });
@@ -125,10 +128,10 @@
 			});
 			queueText({
 				text: card.gold,
-				font: 'normal normal normal 20px Cambo',
+				font: 'normal 16px Serif',
 				fillStyle: '#000',
-				x: iconOffset+(goldIconWidth/2)-6,
-				y: 41
+				x: iconOffset+(goldIconWidth/2)-5,
+				y: 40
 			});
 			iconOffset += goldIconWidth+iconPadding;
 		}
@@ -140,9 +143,9 @@
 			});
 			queueText({
 				text: card.faeria,
-				font: 'normal normal normal 20px Cambo',
+				font: 'normal 16px Serif',
 				fillStyle: '#000',
-				x: iconOffset+(faeriaIconWidth/2)-5,
+				x: iconOffset+(faeriaIconWidth/2)-4,
 				y: 40
 			});
 			iconOffset += faeriaIconWidth+iconPadding;
@@ -177,8 +180,8 @@
 
 		var titleOpts = {
 			text: card.name.toUpperCase(),
-			font: 'normal normal bold 15px Cambo',
-			fillStyle: '#d0c8a8',
+			font: 'bold 15px IM Fell English',
+			fillStyle: '#d9d1b8',
 			x: 140,
 			y: 35,
 			maxWidth: 200,
@@ -189,8 +192,8 @@
 
 		var typeOpts = {
 			text: card.type,
-			font: 'normal normal normal 20px Cambo',
-			fillStyle: '#d0c8a8',
+			font: 'normal 19px IM Fell English',
+			fillStyle: '#d9d1b8',
 			x: null,
 			y: 473
 		};
@@ -203,7 +206,7 @@
 			y: 310,
 			maxWidth: 220,
 			lineHeight: 20,
-			font: 'normal normal normal 16px Helvetica',
+			font: 'normal 16px Arial',
 			fillStyle: '#000',
 			boxHeight: 200,
 			color: card.color[0].toUpperCase()
@@ -212,26 +215,36 @@
 
 		if (card.type === 'Creature') {
 			var attackLifeOpts = {
-				text: card.attack + ' / ' + card.life,
-				font: 'normal normal normal 24px Cambo',
-				fillStyle: '#d0c8a8',
+				text: card.attack + '    ' + card.life,
+				font: 'normal 20px Prata',
+				fillStyle: '#d9d1b8',
 				align: 'center',
 				x: 137,
-				y: 335
+				y: 335,
+				stroke: true
 			};
 			queueText(attackLifeOpts);
+
+			queueText({
+				text: '/',
+				font: 'normal 30px Arial Narrow',
+				fillStyle: '#635241',
+				align: 'center',
+				x: 137,
+				y: 339
+			})
 		} else if (card.type === 'Structure') {
 			var lifeOpts = {
 				text: card.life,
-				font: 'normal normal normal 24px Cambo',
-				fillStyle: '#d0c8a8',
+				font: 'normal 20px Prata',
+				fillStyle: '#d9d1b8',
 				align: 'center',
 				x: 137,
-				y: 335
+				y: 335,
+				stroke: true
 			};
 			queueText(lifeOpts);
 		}
-
 	}
 
 	function getIconOffset(card) {
@@ -443,10 +456,39 @@
 					ctx.drawImage(opt.img, opt.x, opt.y);
 					break;
 				case 'text':
+
+
+					if (opt.stroke) {
+						ctx.fillStyle = opt.fillStyle;
+						ctx.shadowColor = "black";
+						ctx.shadowBlur = 2;
+						ctx.font = "20px Prata";
+
+						ctx.shadowOffsetX = 0;
+						ctx.shadowOffsetY = 1;
+						ctx.strokeText(opt.text, opt.x, opt.y);
+
+						ctx.shadowOffsetX = 0;
+						ctx.shadowOffsetY = -1;
+						ctx.strokeText(opt.text, opt.x, opt.y);
+
+						ctx.shadowOffsetX = 1;
+						ctx.shadowOffsetY = 0;
+						ctx.strokeText(opt.text, opt.x, opt.y);
+
+						ctx.shadowOffsetX = -1;
+						ctx.shadowOffsetY = 0;
+						ctx.strokeText(opt.text, opt.x, opt.y);
+					}
+
+					ctx.shadowOffsetX = 0;
+					ctx.shadowOffsetY = 0;
+					ctx.shadowBlur = 0;
 					ctx.textAlign = opt.align ? opt.align : 'left';
 					ctx.font = opt.font;
 					ctx.fillStyle = opt.fillStyle;
 					ctx.fillText(opt.text, opt.x, opt.y);
+
 					break;
 				case 'wraptext':
 					wrapText(opt);
@@ -476,7 +518,7 @@
 //load fonts
 WebFontConfig = {
 	google: {
-		families: ['Cambo']
+		families: ['IM Fell English', 'Prata']
 	},
 	fontactive: function(familyName, fvd) {
 		FAERIACARDS.setFontActive();
