@@ -13,13 +13,14 @@
         <script>
 
         function append(data){
+            console.log('app')
             var i = new Image();
             i.src = data;
             document.getElementsByTagName('body')[0].appendChild(i);
         }
 
         FAERIACARDS.setContainer('.rendercontainer');
-
+        FAERIACARDS.ready(function() {})
         FAERIACARDS.queue({
             card: {
                 name: 'Meroval king\'s guard', //String

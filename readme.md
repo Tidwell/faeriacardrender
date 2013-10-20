@@ -63,9 +63,10 @@ returns the base64 version of the image from canvas (png)
 
 queue
 -----
-(OBJ { card: OBJ, callback: func})
+(OBJ { card: OBJ, callback: func, container: string})
 
-Queues a render to occur with a callback being called after render is done with the base64 encoded image
+Queues a render to occur with a callback being called after render is done with the base64 encoded image.  Can
+accept a container selector to append the canvas to.
 
 	FAERIACARDS.queue({
 		card: {

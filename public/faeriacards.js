@@ -23,6 +23,8 @@
 
 	var iconPadding = 2;
 
+	var currentCallback = null;
+
 	var rarityMap = {
 		C: 'img/card_rarity_common.png',
 		U: 'img/card_rarity_uncommon.png',
@@ -69,6 +71,7 @@
 	}
 
 	function setContainer(selector) {
+		if (container === selector) { return; }
 		container = selector;
 		getElements();
 	}
@@ -79,10 +82,12 @@
 	function getElements() {
 		//append the canvas
 		var el = document.querySelectorAll(container);
-		el[0].innerHTML = '<canvas width="280" height="500"></canvas>';
-		canvas = el[0].querySelectorAll('canvas')[0];
-		//get the context
-		ctx = canvas.getContext('2d');
+		if (el.length) {
+			el[0].innerHTML = '<canvas width="280" height="500"></canvas>';
+			canvas = el[0].querySelectorAll('canvas')[0];
+			//get the context
+			ctx = canvas.getContext('2d');
+		}
 	}
 
 	var loadedFonts = 0;
@@ -106,12 +111,20 @@
 	var renderQueue = [];
 	function queueRender(obj) {
 		renderQueue.push(obj);
+		renderNext();
+	}
+
+	function clearQueue() {
+		renderQueue = [];
 	}
 
 	function renderNext() {
-		if (isRendering || !renderQueue.length) { return; }
+		if (!ready || isRendering || !renderQueue.length) { return; }
 		var toRender = renderQueue.shift();
 		currentCallback = toRender.callback;
+		if (container != toRender.container) {
+			setContainer(toRender.container);
+		}
 		render(toRender.card);
 	}
 	function render(card) {
@@ -188,11 +201,13 @@
 			}
 		});
 
-		queueImage({
-			image: rarityMap[card.rarity],
-			x: 12,
-			y: 452
-		});
+		if (card.rarity) {
+			queueImage({
+				image: rarityMap[card.rarity],
+				x: 12,
+				y: 452
+			});
+		}
 
 		var titleOpts = {
 			text: card.name.toUpperCase(),
@@ -216,18 +231,20 @@
 		typeOpts.x = getCenteredTextOffset(typeOpts);
 		queueText(typeOpts);
 
-		effectText = {
-			text: card.effect,
-			x: 140,
-			y: 310,
-			maxWidth: 220,
-			lineHeight: 20,
-			font: 'normal 16px Arial',
-			fillStyle: '#000',
-			boxHeight: 200,
-			color: card.color[0].toUpperCase()
-		};
-		queueWrapText(effectText);
+		if (card.effect) {
+			effectText = {
+				text: card.effect,
+				x: 140,
+				y: 310,
+				maxWidth: 220,
+				lineHeight: 20,
+				font: 'normal 16px Arial',
+				fillStyle: '#000',
+				boxHeight: 200,
+				color: card.color[0].toUpperCase()
+			};
+			queueWrapText(effectText);
+		}
 
 		if (card.type === 'Creature') {
 			var attackLifeOpts = {
@@ -248,8 +265,8 @@
 				align: 'center',
 				x: 137,
 				y: 339
-			})
-		} else if (card.type === 'Structure') {
+			});
+		} else if (card.type === 'Structure' && card.life) {
 			var lifeOpts = {
 				text: card.life,
 				font: 'normal 20px Prata',
@@ -436,6 +453,14 @@
 					drawAll();
 				}
 			}, false);
+
+			img.addEventListener('error', function() {
+				opt.img = null;
+				totalLoaded++;
+				if (totalLoaded === drawBuffer.length) {
+					drawAll();
+				}
+			})
 			img.src = opt.image; // Set source path
 			opt.img = img;
 		} else {
@@ -474,12 +499,14 @@
 		drawBuffer.forEach(function(opt) {
 			switch (opt.type) {
 				case 'image':
+					if (!opt.img) { return; } //failed to load
 					ctx.drawImage(opt.img, opt.x, opt.y);
 					break;
 				case 'text':
 
 
 					if (opt.stroke) {
+						ctx.textAlign = opt.align ? opt.align : 'left';
 						ctx.fillStyle = opt.fillStyle;
 						ctx.shadowColor = "black";
 						ctx.shadowBlur = 2;
@@ -538,6 +565,7 @@
 		setContainer: setContainer,
 		init: init,
 		toURL: toURL,
+		clearQueue: clearQueue,
 
 		setFontActive: fontActive
 	};
