@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <div class="rendercontainer" style="display: none"></div>
+        <script src="faeriacards.js"></script>
+        <script>
+
+        function append(data){
+            var i = new Image();
+            i.src = data;
+            document.getElementsByTagName('body')[0].appendChild(i);
+        }
+
+        FAERIACARDS.setContainer('.rendercontainer');
+
+        FAERIACARDS.queue({
+            card: {
+                name: 'Meroval king\'s guard', //String
+                img: 'img/tstimg.jpg', //String
+                gold: 7, //Number
+                faeria: 2, //Number
+                rarity: 'E', // 'C','U','E','R','L'
+                attack: 2, // Number
+                life: 4, // Number
+                type: 'Creature', //'Creature', Structure', 'Event'
+                effect: 'Flying. [Charge3]. [lb] Only attacks orbs.', //String  non-value keywords can be typed.  keywords with values have to be in the form: [Keyword#]
+                /*
+                Ranged attack. [Strikeback3]. Conquest. Flying. [Charge3]. Haste. Haunt. [Protection3]. [Accumulator4]. Jump. Frenzy. Curse. [Radiate4]. Aquatic. Auto-collect. Convoke.
+                */
+                color: 'green', //'blue', 'green', 'red', 'yellow', 'human'
+                landB: 0, //number
+                landG: 0, //number
+                landR: 0, //number
+                landY: 2 //number
+            },
+            callback: append
+        });
+
+        FAERIACARDS.queue({
+            card: {
+                name: 'Meroval2 king\'s guard', //String
+                img: 'img/tstimg.jpg', //String
+                gold: 7, //Number
+                faeria: 2, //Number
+                rarity: 'E', // 'C','U','E','R','L'
+                attack: 2, // Number
+                life: 4, // Number
+                type: 'Creature', //'Creature', Structure', 'Event'
+                effect: 'Flying. [Charge3]. [lb] Only attacks orbs.', //String  non-value keywords can be typed.  keywords with values have to be in the form: [Keyword#]
+                /*
+                Ranged attack. [Strikeback3]. Conquest. Flying. [Charge3]. Haste. Haunt. [Protection3]. [Accumulator4]. Jump. Frenzy. Curse. [Radiate4]. Aquatic. Auto-collect. Convoke.
+                */
+                color: 'green', //'blue', 'green', 'red', 'yellow', 'human'
+                landB: 0, //number
+                landG: 0, //number
+                landR: 0, //number
+                landY: 2 //number
+            },
+            callback: append
+        });
+        </script>
+    </body>
+</html>

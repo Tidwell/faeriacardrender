@@ -98,11 +98,27 @@
 			render(card);
 		});
 		afterLoad = [];
+
+		renderNext();
 	}
 
+	var isRendering = false;
+	var renderQueue = [];
+	function queueRender(obj) {
+		renderQueue.push(obj);
+	}
+
+	function renderNext() {
+		if (isRendering || !renderQueue.length) { return; }
+		var toRender = renderQueue.shift();
+		currentCallback = toRender.callback;
+		render(toRender.card);
+	}
 	function render(card) {
+		if (isRendering) { return; }
 		if (!ready) { afterLoad.push(card); return; }
 		if (!ctx) { getElements(); }
+		isRendering = true;
 		ctx.clearRect ( 0,0,canvas.width,canvas.height );
 
 		queueImage({
@@ -503,6 +519,12 @@
 		});
 		drawBuffer = [];
 		totalLoaded = 0;
+		if (currentCallback) {
+			currentCallback(toURL());
+			currentCallback = null;
+		}
+		isRendering = false;
+		renderNext();
 	}
 
 	function toURL() {
@@ -511,6 +533,7 @@
 
 	window.FAERIACARDS = {
 		render: render,
+		queue: queueRender,
 		ready: onReady,
 		setContainer: setContainer,
 		init: init,
