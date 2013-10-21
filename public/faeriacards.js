@@ -137,7 +137,9 @@
 		queueImage({
 			image: card.img,
 			x: 18,
-			y: 73
+			y: 73,
+			w: 250,
+			h: 250
 		});
 
 		var background = 'img/cardbg_' + card.color + (card.type.toLowerCase() === 'event' ? '_event' : '') + '.png';
@@ -500,6 +502,10 @@
 			switch (opt.type) {
 				case 'image':
 					if (!opt.img) { return; } //failed to load
+					if (opt.w && opt.h) {
+						ctx.drawImage(opt.img, opt.x, opt.y, opt.w, opt.h);
+						break;
+					}
 					ctx.drawImage(opt.img, opt.x, opt.y);
 					break;
 				case 'text':
