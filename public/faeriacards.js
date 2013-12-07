@@ -204,7 +204,7 @@
 						queueImage({
 							image: 'img/card_cost_'+color+'.png',
 							x: offset,
-							y: 16
+							y: 17
 						});
 					}});
 				}(startOffset));
