@@ -182,26 +182,44 @@
 			iconOffset += faeriaIconWidth+iconPadding;
 		}
 
+		var toQueue = [];
+
 		landProps.forEach(function(color){
 			var startOffset;
 			//land icons are rendered right to left
+			//if there is at least one land cost, we use last point we left off
 			if (card['land'+color]) {
 				startOffset = iconOffset;
 			}
+			//if there are more than one icon, we adjust for each one
 			if (card['land'+color] > 1) {
 				startOffset += (landIconWidth/2)*(card['land'+color]-1);
 			}
 			var i = 0;
 			while (i< card['land'+color]) {
-				queueImage({
-					image: 'img/card_cost_'+color+'.png',
-					x: startOffset,
-					y: 16
-				});
+				//IIFE to capture the startOffset
+				(function(offset) {
+					//add it to the queue we will sort later to make sure they are in the right order
+					toQueue.push({offset: offset, f: function() {
+						queueImage({
+							image: 'img/card_cost_'+color+'.png',
+							x: offset,
+							y: 16
+						});
+					}});
+				}(startOffset));
+				//update the start offset and the icon offset
 				startOffset -= landIconWidth/2;
+				iconOffset += landIconWidth/2;
 				i++;
 			}
 		});
+		//sort the queue so that they are in offset order
+		toQueue.sort(function(a,b){return a.offset - b.offset; });
+		//reverse it so they are right->left renderable
+		toQueue.reverse();
+		//call each function to render it
+		toQueue.forEach(function(f){f.f();});
 
 		if (card.rarity) {
 			queueImage({
@@ -299,13 +317,21 @@
 			totalIconWidth += faeriaIconWidth;
 			isFaeria = true;
 		}
+		var areLands = false;
 		landProps.forEach(function(color){
 			if (card['land'+color]) {
 				totalIcons += card['land'+color];
-				totalIconWidth += landIconWidth;
+				if (!areLands) {
+					//if it is the primary color we offset by the full icon width (for the entire visible icon)
+					totalIconWidth += landIconWidth;
+				} else {
+					//if it is a secondary color we have to offset by just half the icon width
+					totalIconWidth += landIconWidth/2;
+				}
 				if (card['land'+color] > 1) {
 					totalIconWidth += landIconWidth * (card['land'+color]-1) / 2;
 				}
+				areLands = true;
 			}
 			isLand = true;
 		});
@@ -318,7 +344,7 @@
 			totalIconWidth += iconPadding;
 		}
 
-		return (cardWidth-totalIconWidth)/2;
+		return ((cardWidth-totalIconWidth)/2);
 	}
 	function getCenteredTextOffset(opt) {
 		ctx.font = opt.font;
