@@ -31,6 +31,7 @@
 		E: 'img/card_rarity_exceptional.png',
 		R: 'img/card_rarity_rare.png',
 		L: 'img/card_rarity_legendary.png',
+		B: 'img/card_rarity_common.png'
 	};
 
 	var landProps = ['B', 'G', 'R', 'Y'];
@@ -59,7 +60,9 @@
 		'Radiate',
 		'Aquatic',
 		'Auto-collect',
-		'Convoke'
+		'Convoke',
+		'Rage',
+		'Faerialink'
 	];
 
 	function onReady(func) {
